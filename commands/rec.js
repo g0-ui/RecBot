@@ -125,7 +125,7 @@ export async function execute(interaction) {
 
         // 募集完了のEmbedに更新し、ボタンを非表示
         embed.setDescription(
-          `✅ 募集完了！VCを作成しました。\n${boshu.participants.length}人参加済み。`
+          `✅ 募集した人数が集まりました！VCを作成しました。\n${boshu.participants.length}人参加済み。`
         );
         await i.update({ embeds: [embed], components: [] });
 
