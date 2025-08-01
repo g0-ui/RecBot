@@ -1,0 +1,25 @@
+{
+  "name": "recbot",
+  "version": "1.0.0",
+  "description": "Discord募集用",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/g0-ui/RecBot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/g0-ui/RecBot/issues"
+  },
+  "homepage": "https://github.com/g0-ui/RecBot#readme",
+  "dependencies": {
+    "discord.js": "^14.21.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  }
+}
