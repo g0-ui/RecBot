@@ -4,38 +4,34 @@ import { readdirSync } from "fs"; // ファイルシステム操作用
 import path from "path"; // パス操作用
 import { fileURLToPath } from "url"; // ファイルURLをパスに変換
 
-// 現在のディレクトリ名を取得
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url)); // 現在のディレクトリ名を取得
 
-// Discordクライアントを作成（ギルドとボイス状態のIntentを指定）
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates], // ギルドとボイス状態のIntentを指定
 });
 
-// コマンドを格納するコレクションを作成
-client.commands = new Collection();
+client.commands = new Collection(); // コマンドを格納するコレクション
+client.activeBoshu = new Map(); // 募集中の一覧（メモリ管理用）
 
-// commandsフォルダ内の.jsファイルを取得
+// commandsフォルダ内の.jsファイルを取得してコマンドとして登録
 const commandFiles = readdirSync(path.join(__dirname, "commands")).filter(
   (file) => file.endsWith(".js")
 );
-
-// 各コマンドファイルをインポートしてコレクションに追加
 for (const file of commandFiles) {
-  const command = await import(`./commands/${file}`);
-  client.commands.set(command.data.name, command);
+  const command = await import(`./commands/${file}`); // コマンドファイルを動的インポート
+  client.commands.set(command.data.name, command); // コマンド名でコレクションに追加
 }
 
 // Botが起動したときの処理
 client.once("ready", () => {
-  console.log(`✅ Logged in as ${client.user.tag}`);
+  console.log(`✅ Logged in as ${client.user.tag}`); // ログイン完了メッセージ
 });
 
 // コマンドが実行されたときの処理
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return; // チャットコマンド以外は無視
 
-  const command = client.commands.get(interaction.commandName);
+  const command = client.commands.get(interaction.commandName); // コマンド取得
   if (!command) return; // コマンドが存在しない場合は無視
 
   try {
@@ -49,5 +45,4 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-// Discord Botにログイン
 client.login(process.env.DISCORD_TOKEN);
