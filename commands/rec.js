@@ -8,34 +8,48 @@ import {
 
 // スラッシュコマンドの定義
 export const data = new SlashCommandBuilder()
-  .setName("募集") // コマンド名
-  .setDescription("ゲーム募集を開始します") // コマンド説明
-  .addIntegerOption(
-    (option) =>
-      option.setName("人数").setDescription("必要な人数").setRequired(true) // 必要人数
+  .setName("募集")
+  .setDescription("ゲーム募集を開始します")
+  .addIntegerOption((option) =>
+    option.setName("人数").setDescription("必要な人数").setRequired(true)
   )
-  .addStringOption(
-    (option) =>
-      option
-        .setName("モード")
-        .setDescription("ゲームモード（例：ランク）")
-        .setRequired(true) // ゲームモード
+  // ゲームモードを「カジュアル」「ランク」「チームデスマッチ」の中から選択する
+  .addStringOption((option) =>
+    option
+      .setName("モード")
+      .setDescription("ゲームモードを選択してください")
+      .setRequired(true)
+      .addChoices(
+        { name: "カジュアル", value: "カジュアル" },
+        { name: "ランク", value: "ランク" },
+        { name: "チームデスマッチ", value: "チームデスマッチ" }
+      )
   );
 
 // コマンド実行時の処理
 export async function execute(interaction) {
-  const maxPlayers = interaction.options.getInteger("人数"); // 必要人数取得
-  const mode = interaction.options.getString("モード"); // モード取得
-  const participants = []; // 参加者IDリスト
-  const authorId = interaction.user.id; // 主催者ID
+  const maxPlayers = interaction.options.getInteger("人数");
+  const mode = interaction.options.getString("モード");
+  const allowedModes = ["カジュアル", "ランク", "チームデスマッチ"];
 
-  // Embed（募集メッセージ）作成
+  // 入力をチェックして、正しいゲームモードかどうか確認
+  if (!allowedModes.includes(mode)) {
+    return await interaction.reply({
+      content:
+        "❌ 正しいゲームモードを入力してください（カジュアル・ランク・チームデスマッチ）",
+      ephemeral: true,
+    });
+  }
+
+  // 通常処理ここから（省略せずに続けてOK）
+  const participants = [];
+  const authorId = interaction.user.id;
+
   const embed = new EmbedBuilder()
     .setTitle(`🎮 募集中 - ${mode}`)
     .setDescription(`必要人数: **${maxPlayers}人**\n現在の参加者: 0人`)
     .setColor(0x00ae86)
     .setFooter({ text: `主催者: ${interaction.user.tag}` });
-
   // 参加ボタン作成
   const joinButton = new ButtonBuilder()
     .setCustomId("join")
